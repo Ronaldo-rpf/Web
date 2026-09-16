@@ -1,0 +1,146 @@
+<main class="pagina">
+  <section class="cartao" aria-labelledby="titulo">
+    <div class="barra-superior">
+      <span class="simbolo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="5" y="10" width="14" height="11" rx="3" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" stroke-linecap="round" />
+        </svg>
+      </span>
+      @if (tela === 'login') {
+        <button class="link criar-conta" type="button" (click)="mudarTela('cadastro')">
+          Criar conta <span aria-hidden="true">↗</span>
+        </button>
+      } @else {
+        <button class="link" type="button" (click)="mudarTela('login')">
+          <span aria-hidden="true">←</span> Voltar ao login
+        </button>
+      }
+    </div>
+
+    <header class="cabecalho">
+      <span class="detalhe" aria-hidden="true"></span>
+      <h1 id="titulo" #titulo tabindex="-1">{{ textos[tela].titulo }}</h1>
+      <p>{{ textos[tela].descricao }}</p>
+    </header>
+
+    @switch (tela) {
+      @case ('login') {
+        <form #formLogin="ngForm" (ngSubmit)="entrar(formLogin)" (input)="mensagem = ''" novalidate>
+          <div class="campo">
+            <label for="email">E-mail</label>
+            <input id="email" name="email" type="email" placeholder="seuemail@exemplo.com"
+              autocomplete="username" required email [(ngModel)]="email" #campoEmail="ngModel"
+              [attr.aria-invalid]="campoEmail.invalid && campoEmail.touched"
+              [attr.aria-describedby]="campoEmail.invalid && campoEmail.touched ? 'erro-email' : null" />
+            @if (campoEmail.invalid && campoEmail.touched) {
+              <p class="erro" id="erro-email">Informe um e-mail válido.</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="senha">Senha</label>
+            <div class="campo-senha">
+              <input id="senha" name="senha" [type]="mostrarSenha ? 'text' : 'password'"
+                placeholder="Digite sua senha" autocomplete="current-password" required
+                [(ngModel)]="senha" #campoSenha="ngModel"
+                [attr.aria-invalid]="campoSenha.invalid && campoSenha.touched"
+                [attr.aria-describedby]="campoSenha.invalid && campoSenha.touched ? 'erro-senha' : null" />
+              <button class="visibilidade" type="button" (click)="mostrarSenha = !mostrarSenha"
+                [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+                [attr.aria-pressed]="mostrarSenha" aria-controls="senha">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                  @if (mostrarSenha) { <path d="m3 3 18 18" /> }
+                </svg>
+              </button>
+            </div>
+            @if (campoSenha.invalid && campoSenha.touched) {
+              <p class="erro" id="erro-senha">Informe sua senha.</p>
+            }
+          </div>
+
+          <div class="recuperar">
+            <button class="link" type="button" (click)="mudarTela('recuperar')">Esqueci a senha</button>
+          </div>
+          <button class="botao-principal" type="submit">Entrar <span aria-hidden="true">→</span></button>
+        </form>
+      }
+
+      @case ('recuperar') {
+        <form #formRecuperacao="ngForm" (ngSubmit)="recuperarSenha(formRecuperacao)"
+          (input)="mensagem = ''" novalidate>
+          <div class="campo">
+            <label for="email-recuperacao">E-mail</label>
+            <input id="email-recuperacao" name="emailRecuperacao" type="email"
+              placeholder="seuemail@exemplo.com" autocomplete="email" required email
+              [(ngModel)]="emailRecuperacao" #campoRecuperacao="ngModel"
+              [attr.aria-invalid]="campoRecuperacao.invalid && campoRecuperacao.touched"
+              [attr.aria-describedby]="campoRecuperacao.invalid && campoRecuperacao.touched ? 'erro-recuperacao' : null" />
+            @if (campoRecuperacao.invalid && campoRecuperacao.touched) {
+              <p class="erro" id="erro-recuperacao">Informe um e-mail válido.</p>
+            }
+          </div>
+          <button class="botao-principal" type="submit">Recuperar senha <span aria-hidden="true">→</span></button>
+          <p class="nota">Exemplo de recuperação de senha, sem envio de e-mail.</p>
+        </form>
+      }
+
+      @case ('cadastro') {
+        <form #formCadastro="ngForm" (ngSubmit)="criarConta(formCadastro)" (input)="mensagem = ''" novalidate>
+          <div class="campo">
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" type="text" placeholder="Como podemos chamar você?"
+              autocomplete="name" required pattern=".*\S.*" [(ngModel)]="cadastro.nome" #campoNome="ngModel"
+              [attr.aria-invalid]="campoNome.invalid && campoNome.touched"
+              [attr.aria-describedby]="campoNome.invalid && campoNome.touched ? 'erro-nome' : null" />
+            @if (campoNome.invalid && campoNome.touched) {
+              <p class="erro" id="erro-nome">Informe seu nome.</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="email-cadastro">E-mail</label>
+            <input id="email-cadastro" name="emailCadastro" type="email" placeholder="seuemail@exemplo.com"
+              autocomplete="email" required email [(ngModel)]="cadastro.email" #campoEmailCadastro="ngModel"
+              [attr.aria-invalid]="campoEmailCadastro.invalid && campoEmailCadastro.touched"
+              [attr.aria-describedby]="campoEmailCadastro.invalid && campoEmailCadastro.touched ? 'erro-email-cadastro' : null" />
+            @if (campoEmailCadastro.invalid && campoEmailCadastro.touched) {
+              <p class="erro" id="erro-email-cadastro">Informe um e-mail válido.</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="senha-cadastro">Senha</label>
+            <input id="senha-cadastro" name="senhaCadastro" type="password" placeholder="No mínimo 6 caracteres"
+              autocomplete="new-password" required minlength="6" [(ngModel)]="cadastro.senha" #campoSenhaCadastro="ngModel"
+              [attr.aria-invalid]="campoSenhaCadastro.invalid && campoSenhaCadastro.touched"
+              [attr.aria-describedby]="campoSenhaCadastro.invalid && campoSenhaCadastro.touched ? 'erro-senha-cadastro' : null" />
+            @if (campoSenhaCadastro.invalid && campoSenhaCadastro.touched) {
+              <p class="erro" id="erro-senha-cadastro">Use uma senha com pelo menos 6 caracteres.</p>
+            }
+          </div>
+
+          <div class="campo">
+            <label for="confirmar-senha">Confirmar senha</label>
+            <input id="confirmar-senha" name="confirmarSenha" type="password" placeholder="Digite a senha novamente"
+              autocomplete="new-password" required [(ngModel)]="cadastro.confirmarSenha" #campoConfirmacao="ngModel"
+              [attr.aria-invalid]="campoConfirmacao.touched && (campoConfirmacao.invalid || cadastro.senha !== cadastro.confirmarSenha)"
+              [attr.aria-describedby]="campoConfirmacao.touched && (campoConfirmacao.invalid || cadastro.senha !== cadastro.confirmarSenha) ? 'erro-confirmacao' : null" />
+            @if (campoConfirmacao.touched && (campoConfirmacao.invalid || cadastro.senha !== cadastro.confirmarSenha)) {
+              <p class="erro" id="erro-confirmacao">As senhas precisam ser iguais.</p>
+            }
+          </div>
+
+          <button class="botao-principal" type="submit">Criar conta <span aria-hidden="true">→</span></button>
+          <p class="nota">Cadastro demonstrativo, sem armazenamento de dados.</p>
+        </form>
+      }
+    }
+
+    <div class="mensagem" role="status" aria-live="polite" aria-atomic="true">
+      @if (mensagem) { <p>{{ mensagem }}</p> }
+    </div>
+  </section>
+</main>
